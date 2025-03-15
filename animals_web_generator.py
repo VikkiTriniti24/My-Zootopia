@@ -1,32 +1,12 @@
 import json
-import requests
-
-API_URL = "https://api.api-ninjas.com/v1/animals?name="
-API_KEY = "uxyIjXGBOpGHIMCkQseXjQ==Cu8jEvBxdMV5S2du"
-
-# Benutzer nach Tiernamen fragen
-animal_name = input("Enter a name of an animal: ").strip()
-
-# API-Request ausführen
-headers = {"X-Api-Key": API_KEY}
-response = requests.get(API_URL + animal_name, headers=headers)
-
-if response.status_code == 200:
-    data = response.json()
-    if not data:
-        print(f" Kein Tier mit dem Namen '{animal_name}' gefunden.")
-        exit()
-else:
-    print(f" Fehler beim Abrufen der API-Daten: {response.status_code}")
-    exit()
+import data_fetcher
 
 
-# Tier-Infos serialisieren
 def serialize_animal(animal_obj):
     """Serialisiert ein einzelnes Tier als HTML-Listenelement"""
     name = animal_obj.get("name", "Unknown")
     diet = animal_obj.get("characteristics", {}).get("diet", "Unknown")
-    location = ", ".join(animal_obj.get("locations", ["Unknown"]))  # Falls mehrere Locations existieren
+    location = ", ".join(animal_obj.get("locations", ["Unknown"]))
     type_ = animal_obj.get("characteristics", {}).get("type", "Unknown")
 
     output = '<li class="cards__item">\n'
@@ -41,21 +21,32 @@ def serialize_animal(animal_obj):
     return output
 
 
-# Alle Tiere serialisieren
+# Benutzer nach einem Tier fragen
+animal_name = input("Please enter an animal: ").strip()
+
+# Daten abrufen (von `data_fetcher.py`)
+data = data_fetcher.fetch_data(animal_name)
+
+if not data:
+    print(f"Keine Daten für '{animal_name}' gefunden. Beende Programm.")
+    exit()
+
+# lle Tiere serialisieren
 output = ''.join(serialize_animal(animal) for animal in data)
 
 # HTML-Template lesen
 with open("animals_template.html", "r", encoding="utf-8") as file:
     html_template = file.read()
 
-#⃣ Platzhalter __REPLACE_ANIMALS_INFO__ ersetzen
+# Platzhalter __REPLACE_ANIMALS_INFO__ ersetzen
 html_output = html_template.replace("__REPLACE_ANIMALS_INFO__", output)
 
 # Neues HTML in Datei schreiben
 with open("animals.html", "w", encoding="utf-8") as file:
     file.write(html_output)
 
-print(f"\n Website wurde erfolgreich für '{animal_name}' erstellt! Öffne 'animals.html' im Browser.")
+print(f"\n Website für '{animal_name}' wurde erfolgreich erstellt! Öffne 'animals.html' im Browser.")
+
 
 
 
