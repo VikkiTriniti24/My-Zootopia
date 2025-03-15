@@ -1,15 +1,21 @@
 import json
 import requests
 
-API_URL = "https://api.api-ninjas.com/v1/animals?name=Fox"
+API_URL = "https://api.api-ninjas.com/v1/animals?name="
 API_KEY = "uxyIjXGBOpGHIMCkQseXjQ==Cu8jEvBxdMV5S2du"
 
-# Daten von der API abrufen
+# Benutzer nach Tiernamen fragen
+animal_name = input("Enter a name of an animal: ").strip()
+
+# API-Request ausführen
 headers = {"X-Api-Key": API_KEY}
-response = requests.get(API_URL, headers=headers)
+response = requests.get(API_URL + animal_name, headers=headers)
 
 if response.status_code == 200:
     data = response.json()
+    if not data:
+        print(f" Kein Tier mit dem Namen '{animal_name}' gefunden.")
+        exit()
 else:
     print(f" Fehler beim Abrufen der API-Daten: {response.status_code}")
     exit()
@@ -42,14 +48,14 @@ output = ''.join(serialize_animal(animal) for animal in data)
 with open("animals_template.html", "r", encoding="utf-8") as file:
     html_template = file.read()
 
-# Platzhalter __REPLACE_ANIMALS_INFO__ ersetzen
+#⃣ Platzhalter __REPLACE_ANIMALS_INFO__ ersetzen
 html_output = html_template.replace("__REPLACE_ANIMALS_INFO__", output)
 
 # Neues HTML in Datei schreiben
 with open("animals.html", "w", encoding="utf-8") as file:
     file.write(html_output)
 
-print("\n 'animals.html' wurde erfolgreich erstellt! Öffne die Datei im Browser.")
+print(f"\n Website wurde erfolgreich für '{animal_name}' erstellt! Öffne 'animals.html' im Browser.")
 
 
 
