@@ -1,28 +1,24 @@
 import json
 
+with open("animals_data.json", "r", encoding="utf-8") as file:
+    data = json.load(file)
 
-def load_data(file_path):
-    """Loads a JSON file"""
-    with open(file_path, "r") as handle:
-        return json.load(handle)
+output = ""
+for animal_data in data:
+    output += f"Name: {animal_data['name']}\n"
+    output += f"Diet: {animal_data['characteristics'].get('diet', 'Unknown')}\n"
+    output += f"Location: {animal_data.get('locations', ['Unknown'])[0]}\n"
+    output += f"Type: {animal_data['characteristics'].get('type', 'Unknown')}\n\n"
 
+with open("animals_template.html", "r", encoding="utf-8") as file:
+    html_template = file.read()
 
-animals_data = load_data('animals_data.json')
+html_output = html_template.replace("__REPLACE_ANIMALS_INFO__", output)
 
-for animal in animals_data:
-    if "name" in animal:
-        print(f"Name: {animal['name']}")
+with open("animals.html", "w", encoding="utf-8") as file:
+    file.write(html_output)
 
-    characteristics = animal.get("characteristics", {})
+print("Generiertes HTML:\n")
+print(html_output)
 
-    if "diet" in characteristics:
-        print(f"Diet: {characteristics['diet']}")
-
-    if "locations" in animal and animal["locations"]:
-        print(f"Location: {animal['locations'][0]}")
-
-    if "type" in characteristics:
-        print(f"Type: {characteristics['type']}")
-
-    print()
-
+print("\n 'animals.html' wurde erfolgreich erstellt! Öffne die Datei im Browser.")
