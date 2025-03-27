@@ -2,7 +2,7 @@ import os
 from dotenv import load_dotenv
 import requests
 
-# .env Datei laden
+# Load .env file
 load_dotenv()
 
 API_KEY = os.getenv('API_KEY')
@@ -12,8 +12,8 @@ API_URL = "https://api.api-ninjas.com/v1/animals?name="
 
 def fetch_data(animal_name):
     """
-    Ruft Tierdaten von der API für das gegebene 'animal_name' ab.
-    Gibt eine Liste von Tieren zurück, jedes Tier ist ein Dictionary:
+    Fetches animal data from the API for the given 'animal_name'.
+    Returns a list of animals, each represented as a dictionary:
     {
       'name': ...,
       'taxonomy': {...},
@@ -27,9 +27,9 @@ def fetch_data(animal_name):
     if response.status_code == 200:
         data = response.json()
         if not data:
-            print(f"Kein Tier mit dem Namen '{animal_name}' gefunden.")
+            print(f"No animal found with the name '{animal_name}'.")
             return []
         return data
     else:
-        print(f"Fehler beim Abrufen der API-Daten: {response.status_code}")
+        print(f"Error retrieving API data: {response.status_code}")
         return []
